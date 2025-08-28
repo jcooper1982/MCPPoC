@@ -1,6 +1,6 @@
 {
   "servers": {
-    "mcp-echo": {
+    "mcp-poc-tools": {
       "command": "dotnet",
       "args": [ "run", "--project", "C:/repos/MCPPoC/MCPPoC.Server/MCPPoC.Server.csproj" ]
     }

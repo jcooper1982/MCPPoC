@@ -20,6 +20,8 @@ namespace MCPPoC.Server
                 .WithStdioServerTransport()
                 .WithToolsFromAssembly();
 
+            builder.Services.AddMemoryCache();
+
             var host = builder.Build();
             await host.RunAsync();
         }

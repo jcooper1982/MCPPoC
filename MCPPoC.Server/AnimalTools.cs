@@ -4,6 +4,7 @@ using ModelContextProtocol.Server;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using MCPPoC.Server;
 
@@ -24,30 +25,26 @@ namespace MCPPoC.Server
 
         [McpServerTool]
         [Description("Upserts an animal in the memory cache.")]
-        public string UpsertAnimal(string id, AnimalType type, string name, int age)
+        public string UpsertAnimal(Animal animal)
         {
-            if (string.IsNullOrWhiteSpace(name) || name.Length < 2 || name.Length > 30)
-                return "Invalid name. Must be 2-30 characters.";
-            // Allow letters and spaces, but no digits or special characters
-            if (!name.All(c => char.IsLetter(c) || c == ' '))
-                return "Invalid name. Only letters and spaces allowed.";
-            // Prevent multiple consecutive spaces and leading/trailing spaces
-            if (name.Contains("  ") || name.StartsWith(" ") || name.EndsWith(" "))
-                return "Invalid name. No leading/trailing or consecutive spaces allowed.";
-            if (age < 0 || age > 40)
-                return "Invalid age. Must be between 0 and 40.";
+            var context = new ValidationContext(animal);
+            var results = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(animal, context, results, true))
+            {
+                return string.Join("; ", results.Select(r => r.ErrorMessage));
+            }
 
             var animals = _cache.GetOrCreate(AnimalCacheKey, entry => new List<Animal>());
-            var existing = animals.FirstOrDefault(a => a.Id == id);
+            var existing = animals.FirstOrDefault(a => a.Id == animal.Id);
             if (existing != null)
             {
-                existing.Type = type;
-                existing.Name = name;
-                existing.Age = age;
+                existing.Type = animal.Type;
+                existing.Name = animal.Name;
+                existing.Age = animal.Age;
             }
             else
             {
-                animals.Add(new Animal { Id = id, Type = type, Name = name, Age = age });
+                animals.Add(animal);
             }
             _cache.Set(AnimalCacheKey, animals);
             return "Animal upserted successfully.";

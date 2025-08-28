@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "mcp-echo": {
+      "command": "dotnet",
+      "args": [ "run", "--project", "C:/repos/MCPPoC/MCPPoC.Server/MCPPoC.Server.csproj" ]
+    }
+  }
+}

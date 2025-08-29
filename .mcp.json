@@ -1,8 +1,8 @@
 {
   "servers": {
     "mcp-poc-tools": {
-      "command": "dotnet",
-      "args": [ "run", "--project", "C:/repos/MCPPoC/MCPPoC.Server/MCPPoC.Server.csproj" ]
+      "type": "http",
+      "url": "http://localhost:5280/mcp"
     }
   }
 }

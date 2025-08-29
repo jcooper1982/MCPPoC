@@ -1,29 +1,48 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ModelContextProtocol.Server;
 
-namespace MCPPoC.Server
+namespace McpHttpEcho
 {
-    internal class Program
+    public class Program
     {
-        static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
-            var builder = Host.CreateApplicationBuilder(args);
+            var builder = WebApplication.CreateBuilder(args);
 
-            // Verbose console logging to STDERR (handy for MCP STDIO debugging)
+            // Log to stderr (don’t pollute stdout if you ever embed this)
             builder.Logging.AddConsole(o => o.LogToStandardErrorThreshold = LogLevel.Trace);
 
-            // Register MCP server + STDIO transport
-            // Auto-discovers tools/prompts/resources in this assembly via attributes
+            // MCP server with attribute discovery
             builder.Services
                 .AddMcpServer()
+                .WithHttpTransport()
+            // NOTE: purposefully adding this in for now just for the sake of the client app
                 .WithStdioServerTransport()
                 .WithToolsFromAssembly();
 
+            // (Optional) CORS if you’ll call from browser-hosted clients
+            builder.Services.AddCors(opt =>
+            {
+                opt.AddPolicy("mcp", p => p
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .SetIsOriginAllowed(_ => true)); // or specify exact origins
+            });
+
             builder.Services.AddMemoryCache();
 
-            var host = builder.Build();
-            await host.RunAsync();
+            var app = builder.Build();
+
+            app.UseCors("mcp");
+
+            // Expose MCP over HTTP/SSE
+            app.MapMcp("/mcp"); // provided by ModelContextProtocol.AspNetCore
+
+            // Standard ASP.NET Core hosting
+            app.Run();
         }
     }
 }

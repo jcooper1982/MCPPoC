@@ -14,7 +14,7 @@ namespace McpSpecDump
 
             var clientTransport = new StdioClientTransport(new StdioClientTransportOptions
             {
-                Name = "EchoServer",
+                Name = "mcp-poc-tools",
                 Command = "dotnet",
                 Arguments = new[] { "run", "--project", projectPath }
             });

@@ -23,6 +23,11 @@ namespace MCPPoC.Server
             _cache = cache;
         }
 
+        /// <summary>
+        /// Upserts an animal in the memory cache.
+        /// </summary>
+        /// <param name="animal">The animal to upsert.</param>
+        /// <returns>A status message indicating success or validation errors.</returns>
         [McpServerTool]
         [Description("Upserts an animal in the memory cache.")]
         public string UpsertAnimal(Animal animal)
@@ -50,6 +55,10 @@ namespace MCPPoC.Server
             return "Animal upserted successfully.";
         }
 
+        /// <summary>
+        /// Gets all animals from the memory cache.
+        /// </summary>
+        /// <returns>A list of all animals currently in the memory cache.</returns>
         [McpServerTool]
         [Description("Gets all animals from the memory cache.")]
         public List<Animal> GetAllAnimals()
@@ -57,6 +66,11 @@ namespace MCPPoC.Server
             return _cache.Get<List<Animal>>(AnimalCacheKey) ?? new List<Animal>();
         }
 
+        /// <summary>
+        /// Searches for an animal by name.
+        /// </summary>
+        /// <param name="name">The name of the animal to search for.</param>
+        /// <returns>The animal with the specified name, or null if not found.</returns>
         [McpServerTool]
         [Description("Searches for an animal by name.")]
         public Animal? GetAnimalByName(string name)

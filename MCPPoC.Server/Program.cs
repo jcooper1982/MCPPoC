@@ -19,8 +19,8 @@ namespace McpHttpEcho
             builder.Services
                 .AddMcpServer()
                 .WithHttpTransport()
-            // NOTE: purposefully adding this in for now just for the sake of the client app
-                .WithStdioServerTransport()
+            // NOTE: GitHub Copilot seems to get upset if Stdio is also enabled alongside http
+                //.WithStdioServerTransport()
                 .WithToolsFromAssembly();
 
             // (Optional) CORS if you’ll call from browser-hosted clients
